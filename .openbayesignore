@@ -1,0 +1,9 @@
+__MACOSX
+.DS_Store
+.git
+backup
+res
+miniimagenet
+omniglot
+.idea
+__pycache__
