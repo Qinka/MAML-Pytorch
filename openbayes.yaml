@@ -3,20 +3,23 @@ data_binding:
   path: /input0
 resource: t4
 env: pytorch-1.7.0
-command: "python miniimagenet_train.py --data /input0 --num-workers=6 --epoch 100000 --task-num 8"
+command: "python miniimagenet_train.py --data=/input0 --num-workers=6 --epoch=100000 --task-num=8"
 
 hyper_tuning:
   max_job_count: 100
-  hyperparameter_metric: test acc new
-  goal: MAXIMIZE
+  hyperparameter_metric: 'test acc new'
+  goal: MINIMIZE
   algorithm: Grid
   parameter_specs:
-  - name: n-way
-    type: DISCRETE
-    discrete_values: [2, 4, 6]
-  - name: k-spt
-    type: DISCRETE
-    discrete_values: [1, 5, 10]
-  - name: k-qry
-    type: DISCRETE
-    discrete_values: [1, 10, 20]
+  # - name: n-way
+  #   type: CATEGORICAL
+  #   categorical_values: ["2", "4", "6"]
+    - name: n-way
+      type: DISCRETE
+      discrete_values: [2, 4, 6]
+    - name: k-spt
+      type: DISCRETE
+      discrete_values: [1, 5, 10]
+    - name: k-qry
+      type: DISCRETE
+      discrete_values: [1, 10, 20]
