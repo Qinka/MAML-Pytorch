@@ -3,7 +3,7 @@ data_binding:
   path: /input0
 resource: t4
 env: pytorch-1.7.0
-command: "python miniimagenet_train.py --data /input0 --num-workers=6  --epoch 100000"
+command: "python miniimagenet_train.py --data /input0 --num-workers=6 --epoch 100000 --task-num 8"
 
 hyper_tuning:
   max_job_count: 100
