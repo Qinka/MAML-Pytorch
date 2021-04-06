@@ -9,6 +9,7 @@ import  argparse
 
 from meta import Meta
 
+from oblog import log_args, log_train_acc, log_test_acc
 
 def mean_confidence_interval(accs, confidence=0.95):
     n = accs.shape[0]
@@ -24,6 +25,7 @@ def main():
     np.random.seed(222)
 
     print(args)
+    log_args(args)
 
     config = [
         ('conv2d', [32, 3, 3, 3, 1, 0]),
@@ -55,10 +57,10 @@ def main():
     print('Total trainable tensors:', num)
 
     # batchsz here means total episode number
-    mini = MiniImagenet('/home/i/tmp/MAML-Pytorch/miniimagenet/', mode='train', n_way=args.n_way, k_shot=args.k_spt,
+    mini = MiniImagenet(args.data, mode='train', n_way=args.n_way, k_shot=args.k_spt,
                         k_query=args.k_qry,
                         batchsz=10000, resize=args.imgsz)
-    mini_test = MiniImagenet('/home/i/tmp/MAML-Pytorch/miniimagenet/', mode='test', n_way=args.n_way, k_shot=args.k_spt,
+    mini_test = MiniImagenet(args.data, mode='test', n_way=args.n_way, k_shot=args.k_spt,
                              k_query=args.k_qry,
                              batchsz=100, resize=args.imgsz)
 
@@ -73,6 +75,7 @@ def main():
             accs = maml(x_spt, y_spt, x_qry, y_qry)
 
             if step % 30 == 0:
+                log_train_acc(accs)
                 print('step:', step, '\ttraining acc:', accs)
 
             if step % 500 == 0:  # evaluation
@@ -88,6 +91,7 @@ def main():
 
                 # [b, update_step+1]
                 accs = np.array(accs_all_test).mean(axis=0).astype(np.float16)
+                log_test_acc(accs)
                 print('Test acc:', accs)
 
 
@@ -95,16 +99,17 @@ if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument('--epoch', type=int, help='epoch number', default=60000)
-    argparser.add_argument('--n_way', type=int, help='n way', default=5)
-    argparser.add_argument('--k_spt', type=int, help='k shot for support set', default=1)
-    argparser.add_argument('--k_qry', type=int, help='k shot for query set', default=15)
+    argparser.add_argument('--n-way', type=int, help='n way', default=5)
+    argparser.add_argument('--k-spt', type=int, help='k shot for support set', default=1)
+    argparser.add_argument('--k-qry', type=int, help='k shot for query set', default=15)
     argparser.add_argument('--imgsz', type=int, help='imgsz', default=84)
     argparser.add_argument('--imgc', type=int, help='imgc', default=3)
-    argparser.add_argument('--task_num', type=int, help='meta batch size, namely task num', default=4)
-    argparser.add_argument('--meta_lr', type=float, help='meta-level outer learning rate', default=1e-3)
-    argparser.add_argument('--update_lr', type=float, help='task-level inner update learning rate', default=0.01)
-    argparser.add_argument('--update_step', type=int, help='task-level inner update steps', default=5)
-    argparser.add_argument('--update_step_test', type=int, help='update steps for finetunning', default=10)
+    argparser.add_argument('--task-num', type=int, help='meta batch size, namely task num', default=4)
+    argparser.add_argument('--meta-lr', type=float, help='meta-level outer learning rate', default=1e-3)
+    argparser.add_argument('--update-lr', type=float, help='task-level inner update learning rate', default=0.01)
+    argparser.add_argument('--update-step', type=int, help='task-level inner update steps', default=5)
+    argparser.add_argument('--update-step-test', type=int, help='update steps for finetunning', default=10)
+    argparser.add_argument('--data', type=str, help='Dataset path', required=True)
 
     args = argparser.parse_args()
 
