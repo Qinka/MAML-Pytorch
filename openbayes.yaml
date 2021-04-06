@@ -1,0 +1,22 @@
+data_binding:
+- data: qinka/Mini-Image-Net/2
+  path: /input0
+resource: t4
+env: pytorch-1.7.0
+command: "python main.py --input=/input0"
+
+hyper_tuning:
+  max_job_count: 100
+  hyperparameter_metric: test acc new
+  goal: MAXIMIZE
+  algorithm: Grid
+  parameter_specs:
+  - name: n-way
+    type: DISCRETE
+    discrete_values: [2, 4, 6]
+  - name: k-spt
+    type: DISCRETE
+    discrete_values: [1, 5, 10]
+  - name: k-qry
+    type: DISCRETE
+    discrete_values: [1, 10, 20]

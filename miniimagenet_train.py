@@ -110,6 +110,7 @@ if __name__ == '__main__':
     argparser.add_argument('--update-step', type=int, help='task-level inner update steps', default=5)
     argparser.add_argument('--update-step-test', type=int, help='update steps for finetunning', default=10)
     argparser.add_argument('--data', type=str, help='Dataset path', required=True)
+    argparser.add_argument('--num-workers', type=int, help="Number of worker threads", default = 1)
 
     args = argparser.parse_args()
 
