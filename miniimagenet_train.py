@@ -2,11 +2,13 @@ import  torch, os
 import  numpy as np
 from    MiniImagenet import MiniImagenet
 import  scipy.stats
+from    torch.nn import functional as F
 from    torch.utils.data import DataLoader
 from    torch.optim import lr_scheduler
 import  random, sys, pickle
 import  argparse
 
+from learner import Learner
 from meta import Meta
 
 from oblog import log_args, log_train_acc, log_test_acc
@@ -49,7 +51,9 @@ def main():
     ]
 
     device = torch.device('cuda')
-    maml = Meta(args, config).to(device)
+    learner = Learner(config, args.imgc, args.imgsz).to(device)
+    loss_fn = F.cross_entropy
+    maml = Meta(args, learner, loss_fn).to(device)
 
     tmp = filter(lambda x: x.requires_grad, maml.parameters())
     num = sum(map(lambda x: np.prod(x.shape), tmp))

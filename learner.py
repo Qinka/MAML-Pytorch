@@ -2,10 +2,26 @@ import  torch
 from    torch import nn
 from    torch.nn import functional as F
 import  numpy as np
+import  abc
 
+class LearnerInterface(metaclass = abc.ABCMeta):
+    @abc.abstractmethod
+    def __init__(self, *args, **kwargs):
+        pass
 
+    @abc.abstractmethod
+    def forward(self, x, vars=None, bn_training=True):
+        pass
 
-class Learner(nn.Module):
+    @abc.abstractmethod
+    def zero_grad(self, vars=None):
+        pass
+
+    @abc.abstractmethod
+    def parameters(self):
+        pass
+
+class Learner(nn.Module, LearnerInterface):
     """
 
     """
