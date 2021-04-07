@@ -30,52 +30,49 @@ def main():
     log_args(args)
 
     config = [
-        ('conv2d', [32, 3, 3, 3, 1, 0]),
+        ('conv2d', [16, 3, 3, 3, 1, 1]),
+        ('relu', [True]),
+        ('bn', [16]),
+        ('conv2d', [16, 32, 3, 3, 1, 1]),
         ('relu', [True]),
         ('bn', [32]),
-        ('max_pool2d', [2, 2, 0]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('conv2d', [32, 64, 3, 3, 1, 1]),
+        ('relu', [True]),
+        ('bn', [64]),
+        ('conv2d', [64, 64, 3, 3, 1, 1]),
+        ('relu', [True]),
+        ('bn', [64]),
+        ('conv2d', [64, 64, 3, 3, 1, 1]),
+        ('relu', [True]),
+        ('bn', [64]),
+        ('conv2d', [64, 32, 3, 3, 1, 1]),
         ('relu', [True]),
         ('bn', [32]),
-        ('max_pool2d', [2, 2, 0]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('conv2d', [32, 16, 3, 3, 1, 1]),
         ('relu', [True]),
-        ('bn', [32]),
-        ('max_pool2d', [2, 2, 0]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('bn', [16]),
+        ('conv2d', [16, 2, 3, 3, 1, 1]),
         ('relu', [True]),
-        ('bn', [32]),
-        ('max_pool2d', [2, 1, 0]),
-        ('flatten', []),
-        ('linear', [args.n_way, 32 * 5 * 5])
+        # ('max_pool2d', [2, 2, 0]),
+        # ('conv2d', [32, 32, 3, 3, 1, 0]),
+        # ('relu', [True]),
+        # ('bn', [32]),
+        # ('max_pool2d', [2, 2, 0]),
+        # ('conv2d', [32, 32, 3, 3, 1, 0]),
+        # ('relu', [True]),
+        # ('bn', [32]),
+        # ('max_pool2d', [2, 2, 0]),
+        # ('conv2d', [32, 32, 3, 3, 1, 0]),
+        # ('relu', [True]),
+        # ('bn', [32]),
+        # ('max_pool2d', [2, 1, 0]),
+        # ('flatten', []),
+        # ('linear', [args.n_way, 32 * 5 * 5])
     ]
 
-    config2 = [
-        ('conv2d', [32, 3, 3, 3, 1, 0]),
-        ('relu', [True]),
-        ('bn', [32]),
-        ('max_pool2d', [2, 2, 0]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
-        ('relu', [True]),
-        ('bn', [32]),
-        ('max_pool2d', [2, 2, 0]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
-        ('relu', [True]),
-        ('bn', [32]),
-        ('max_pool2d', [2, 2, 0]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
-        ('relu', [True]),
-        ('bn', [32]),
-        ('conv2d', [32, 32, 3, 3, 1, 0]),
-        ('relu', [True]),
-        ('bn', [32]),
-        ('max_pool2d', [2, 1, 0]),
-        ('flatten', []),
-        ('linear', [args.n_way, 32 * 5 * 5])
-    ]
 
     device = torch.device('cuda')
-    learner = Learner(config2, args.imgc, args.imgsz).to(device)
+    learner = Learner(config, args.imgc, args.imgsz).to(device)
     loss_fn = F.cross_entropy
     maml = Meta(args, learner, loss_fn).to(device)
 
@@ -85,10 +82,10 @@ def main():
     print('Total trainable tensors:', num)
 
     # batchsz here means total episode number
-    mini = FSSDataset(args.data, mode='train', n_way=args.n_way, k_shot=args.k_spt,
+    mini = FSSDataset(args.data, mode='train', k_shot=args.k_spt,
                         k_query=args.k_qry,
                         batchsz=10000, resize=args.imgsz)
-    mini_test = FSSDataset(args.data, mode='test', n_way=args.n_way, k_shot=args.k_spt,
+    mini_test = FSSDataset(args.data, mode='test', k_shot=args.k_spt,
                              k_query=args.k_qry,
                              batchsz=100, resize=args.imgsz)
 
