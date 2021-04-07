@@ -50,8 +50,33 @@ def main():
         ('linear', [args.n_way, 32 * 5 * 5])
     ]
 
+    config2 = [
+        ('conv2d', [32, 3, 3, 3, 1, 0]),
+        ('relu', [True]),
+        ('bn', [32]),
+        ('max_pool2d', [2, 2, 0]),
+        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('relu', [True]),
+        ('bn', [32]),
+        ('max_pool2d', [2, 2, 0]),
+        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('relu', [True]),
+        ('bn', [32]),
+        ('max_pool2d', [2, 2, 0]),
+        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('relu', [True]),
+        ('bn', [32]),
+        ('max_pool2d', [2, 2, 0]),
+        ('conv2d', [32, 32, 3, 3, 1, 0]),
+        ('relu', [True]),
+        ('bn', [32]),
+        ('max_pool2d', [2, 1, 0]),
+        ('flatten', []),
+        ('linear', [args.n_way, 32 * 5 * 5])
+    ]
+
     device = torch.device('cuda')
-    learner = Learner(config, args.imgc, args.imgsz).to(device)
+    learner = Learner(config2, args.imgc, args.imgsz).to(device)
     loss_fn = F.cross_entropy
     maml = Meta(args, learner, loss_fn).to(device)
 
