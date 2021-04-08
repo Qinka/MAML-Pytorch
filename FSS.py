@@ -43,6 +43,7 @@ class FSSDataset(Dataset):
                 lambda x: Image.open(x).convert('L'),
                 transforms.Resize((self.resize, self.resize)),
                 transforms.ToTensor(),
+                lambda x: x.float(),
             ])
 
         self.path = root
@@ -57,7 +58,7 @@ class FSSDataset(Dataset):
             if t not in self.data:
                 self.data[t] = []
             p = lambda t, i, s: os.path.join(self.path, t, i + s)
-            self.data[t].append(p(t, i, '.jpg'), p(t, i, '.png'))
+            self.data[t].append((p(t, i, '.jpg'), p(t, i, '.png')))
 
         self.cls_num = len(list(self.data.keys()))
 
@@ -96,10 +97,10 @@ class FSSDataset(Dataset):
         query_y   = torch.FloatTensor(self.querysz, 1, self.resize, self.resize)
 
         flatten_support = \
-            [os.path.join(self.path, item) for sublist in self.support_x_batch[index] for item in sublist]
+            [item for sublist in self.support_x_batch[index] for item in sublist]
 
         flatten_query = \
-            [os.path.join(self.path, item) for sublist in self.query_x_batch[index] for item in sublist]
+            [item for sublist in self.query_x_batch[index] for item in sublist]
 
         for i, path in enumerate(flatten_support):
             support_x[i] = self.transform(path[0])
